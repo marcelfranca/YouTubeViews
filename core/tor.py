@@ -20,7 +20,8 @@ class Tor(object):
 
     def installTor(self):
         self.connection()
-        if not self.alive:return
+        if not self.alive:
+            return
         print('Installing Tor ...')
         shell('echo "deb http://http.kali.org/kali kali-rolling main contrib non-free" > /etc/apt/sources.list \
                                     && apt-get update && apt-get install tor -y && apt autoremove -y')
@@ -31,13 +32,16 @@ class Tor(object):
             br = self.createBrowser()
             ip = br.open('https://api.ipify.org/?format=text', timeout=1.5).read()
             br.close()
-        except:pass
+        except:
+            pass
         finally:
-            if not self.alive:self.exit()
+            if not self.alive:
+                self.exit()
             return ip
 
     def updateIp(self, recur=3):
-        if not self.alive:self.exit()
+        if not self.alive:
+            self.exit()
         socks.socket.setdefaulttimeout(5)
         socks.setdefaultproxy(socks.PROXY_TYPE_SOCKS5, '127.0.0.1', 9050, True)
         socket.socket = socks.socksocket
@@ -48,20 +52,26 @@ class Tor(object):
                 print('Error: Network unreachable')
                 reset_counts = 2
                 for _ in range(30):
-                    if not self.alive:return
+                    if not self.alive:
+                        return
                     ip = self.getIp()
-                    if ip:break
+                    if ip:
+                        break
                     else:
                         if reset_counts:
                             reset_counts -= 1
                             shell('service network-manager restart')
                         sleep(1)
-                if not ip:self.restartTor(recur-1)
-            if all([not ip, not recur]):self.connection()
+                if not ip:
+                    self.restartTor(recur-1)
+            if all([not ip, not recur]):
+                self.connection()
 
-            if ip in self.recentIPs.queue:self.restartTor()
+            if ip in self.recentIPs.queue:
+                self.restartTor()
             else:
                 self.ip = ip
                 self.recentIPs.put(ip)
 
-        except:pass
+        except:
+            pass

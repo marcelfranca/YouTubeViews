@@ -18,8 +18,8 @@ class Browser(object):
         br.set_handle_robots(False)
         br.set_handle_refresh(False)
         br.set_cookiejar(http.cookiejar.LWPCookieJar())
-        br.addheaders=[('User-agent',self.useragent())]
-        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(),max_time=1)
+        br.addheaders = [('User-agent', self.useragent())]
+        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
         return br
 
     def watch(self, url):
@@ -28,10 +28,11 @@ class Browser(object):
 
         try:
             br = self.createBrowser()
-            if not br.open(url, timeout=5.0).read():return
+            if not br.open(url, timeout=5.0).read():
+                return
 
             sleepTime = random.randint(self.min, self.max)
-            [sleep(1) for _ in range(sleepTime) if self.alive] # watching the video
+            [sleep(1) for _ in range(sleepTime) if self.alive]  # watching the video
 
             # search for something random
             br.select_form(nr=1)
@@ -41,7 +42,8 @@ class Browser(object):
             br.submit()
             br.close()
             return True
-        except:return
+        except:
+            return
 
     def useragent(self):
         useragents = [

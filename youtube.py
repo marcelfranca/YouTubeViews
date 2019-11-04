@@ -16,11 +16,11 @@ class Views(Browser, Tor):
 
     def __init__(self, urllist, visits, min, max):
 
-        self.bots = 5 # max amount of bots to use
-        self.count = 0 # returning bots
+        self.bots = 5  # max amount of bots to use
+        self.count = 0  # returning bots
         self.ip = None
         self.alive = True
-        self.targets = {} # {url: visits}
+        self.targets = {}  # {url: visits}
         self.recentIPs = Queue(10)
 
         self.min = int(min)
@@ -34,15 +34,16 @@ class Views(Browser, Tor):
         with open(urllist, 'r') as f:
             try:
                 for url in [_ for _ in f.read().split('\n') if _]:
-                    self.targets[url] = 0 # initial view
-            except Exception as err:exit('Error:', err)
+                    self.targets[url] = 0  # initial view
+            except Exception as err:
+                exit('Error:', err)
 
     def display(self, url):
         n = '\033[0m'  # null ---> reset
-        r = '\033[31m' # red
-        g = '\033[32m' # green
-        y = '\033[33m' # yellow
-        b = '\033[34m' # blue
+        r = '\033[31m'  # red
+        g = '\033[32m'  # green
+        y = '\033[33m'  # yellow
+        b = '\033[34m'  # blue
 
         call('clear')
         print('')
@@ -56,8 +57,10 @@ class Views(Browser, Tor):
             if self.watch(url):
                 views = self.targets[url]
                 self.targets[url] = views + 1
-        except:pass
-        finally:self.count -= 1
+        except:
+            pass
+        finally:
+            self.count -= 1
 
     def connection(self):
         try:
@@ -75,9 +78,10 @@ class Views(Browser, Tor):
     def run(self):
         ndex = 0
         while all([self.alive, len(self.targets)]):
-            urls = [] # tmp list of the urls that are being visited
+            urls = []  # tmp list of the urls that are being visited
             self.restartTor()
-            if not self.ip:continue
+            if not self.ip:
+                continue
 
             for _ in range(self.bots):
                 try:
@@ -103,26 +107,29 @@ class Views(Browser, Tor):
                     except:
                         self.exit()
 
+
 if __name__ == '__main__':
 
     # arguments
     args = ArgumentParser()
-    args.add_argument('visits',help='The amount of visits ex: 300')
-    args.add_argument('urllist',help='Youtube videos url list')
-    args.add_argument('min',help='Minimum watch time in seconds ex: 38')
-    args.add_argument('max',help='Maximum watch time in seconds ex: 65')
+    args.add_argument('visits', help='The amount of visits ex: 300')
+    args.add_argument('urllist', help='Youtube videos url list')
+    args.add_argument('min', help='Minimum watch time in seconds ex: 38')
+    args.add_argument('max', help='Maximum watch time in seconds ex: 65')
     args = args.parse_args()
 
     youtube_views = Views(args.urllist, args.visits, args.min, args.max)
 
     # does tor exists?
     if not path.exists('/usr/sbin/tor'):
-        try:youtube_views.installTor()
-        except KeyboardInterrupt:exit('Exiting ...')
+        try:
+            youtube_views.installTor()
+        except KeyboardInterrupt:
+            exit('Exiting ...')
         if all([not path.exists('/usr/sbin/tor'), youtube_views.alive]):
             exit('Please Install Tor')
 
     try:youtube_views.run()
     except Exception as error:
-        print('Error:',error)
+        print('Error:', error)
         youtube_views.exit()
