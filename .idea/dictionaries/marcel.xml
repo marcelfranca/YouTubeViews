@@ -2,6 +2,11 @@
   <dictionary name="marcel">
     <words>
       <w>addheaders</w>
+      <w>autoremove</w>
+      <w>iceweasel</w>
+      <w>ndex</w>
+      <w>restarttor</w>
+      <w>stoptor</w>
       <w>urllist</w>
       <w>useragents</w>
     </words>

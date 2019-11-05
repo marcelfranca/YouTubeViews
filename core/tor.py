@@ -10,15 +10,16 @@ class Tor(object):
     def __init__(self):
         super(Tor, self).__init__()
 
-    def restartTor(self, num=3):
+    def restart_tor(self, num=3):
         shell('service tor restart')
         sleep(1.5)
-        self.updateIp(num)
+        self.update_ip(num)
 
-    def stopTor(self):
+    @staticmethod
+    def stop_tor():
         shell('service tor stop')
 
-    def installTor(self):
+    def install_tor(self):
         self.connection()
         if not self.alive:
             return
@@ -26,20 +27,21 @@ class Tor(object):
         shell('echo "deb http://http.kali.org/kali kali-rolling main contrib non-free" > /etc/apt/sources.list \
                                     && apt-get update && apt-get install tor -y && apt autoremove -y')
 
-    def getIp(self):
+    def get_ip(self):
         try:
             ip = None
             br = self.createBrowser()
-            ip = br.open('https://api.ipify.org/?format=text', timeout=1.5).read()
+            ip = br.open('https://api.ipify.org/?format=text', timeout=2).read()
             br.close()
-        except:
+        except Exception as e:
+            print(e)
             pass
         finally:
             if not self.alive:
                 self.exit()
             return ip
 
-    def updateIp(self, recur=3):
+    def update_ip(self, recur=3):
         if not self.alive:
             self.exit()
         socks.socket.setdefaulttimeout(5)
@@ -47,14 +49,14 @@ class Tor(object):
         socket.socket = socks.socksocket
 
         try:
-            ip = self.getIp()
+            ip = self.get_ip()
             if all([not ip, recur]):
                 print('Error: Network unreachable')
                 reset_counts = 2
                 for _ in range(30):
                     if not self.alive:
                         return
-                    ip = self.getIp()
+                    ip = self.get_ip()
                     if ip:
                         break
                     else:
@@ -63,15 +65,16 @@ class Tor(object):
                             shell('service network-manager restart')
                         sleep(1)
                 if not ip:
-                    self.restartTor(recur-1)
+                    self.restart_tor(recur - 1)
             if all([not ip, not recur]):
                 self.connection()
 
             if ip in self.recentIPs.queue:
-                self.restartTor()
+                self.restart_tor()
             else:
                 self.ip = ip
                 self.recentIPs.put(ip)
 
-        except:
+        except Exception as e:
+            print(e)
             pass

@@ -1,8 +1,8 @@
 from argparse import ArgumentParser
 from os import path
-from random import randint
+# from random import randint
 from subprocess import call
-from subprocess import getoutput as shell
+# from subprocess import getoutput as shell
 from sys import exit
 from threading import Thread
 from time import sleep
@@ -16,6 +16,7 @@ class Views(Browser, Tor):
 
     def __init__(self, urllist, visits, min, max):
 
+        super().__init__()
         self.bots = 5  # max amount of bots to use
         self.count = 0  # returning bots
         self.ip = None
@@ -28,7 +29,7 @@ class Views(Browser, Tor):
         self.visits = int(visits)
 
         if not path.exists(urllist):
-            exit('Error: Unable to locate `{}`'.format(urllist))
+            exit(f'Error: Unable to locate {format(urllist)}')
 
         # read the url list
         with open(urllist, 'r') as f:
@@ -36,7 +37,7 @@ class Views(Browser, Tor):
                 for url in [_ for _ in f.read().split('\n') if _]:
                     self.targets[url] = 0  # initial view
             except Exception as err:
-                exit('Error:', err)
+                exit(f'Error: {err}')
 
     def display(self, url):
         n = '\033[0m'  # null ---> reset
@@ -57,42 +58,44 @@ class Views(Browser, Tor):
             if self.watch(url):
                 views = self.targets[url]
                 self.targets[url] = views + 1
-        except:
+        except Exception as e:
+            print(e)
             pass
         finally:
             self.count -= 1
 
     def connection(self):
         try:
-            br = self.createBrowser()
+            br = self.create_browser()
             br.open('https://example.com', timeout=2.5)
             br.close()
-        except:
-            print('Error: Unable to access the internet')
+        except Exception as e:
+            print(f'Error: {e}: Unable to access the internet')
             self.exit()
 
     def exit(self):
         self.alive = False
-        self.stopTor()
+        self.stop_tor()
 
     def run(self):
         ndex = 0
         while all([self.alive, len(self.targets)]):
             urls = []  # tmp list of the urls that are being visited
-            self.restartTor()
+            self.restart_tor()
             if not self.ip:
                 continue
 
             for _ in range(self.bots):
                 try:
                     url = [_ for _ in self.targets][ndex]
-                except IndexError:return
+                except IndexError:
+                    return
                 view = self.targets[url]
                 if view >= self.visits:
                     del self.targets[url]
                     continue
 
-                if url in urls:continue # prevent wrapping
+                if url in urls:continue  # prevent wrapping
                 ndex = ndex+1 if ndex < len(self.targets)-1 else 0
                 Thread(target=self.visit, args=[url]).start()
                 urls.append(url)
@@ -104,7 +107,8 @@ class Views(Browser, Tor):
                     try:
                         self.display(url)
                         [sleep(1) for _ in range(7) if all([self.count, self.alive])]
-                    except:
+                    except Exception as e:
+                        print(e)
                         self.exit()
 
 
@@ -123,13 +127,14 @@ if __name__ == '__main__':
     # does tor exists?
     if not path.exists('/usr/sbin/tor'):
         try:
-            youtube_views.installTor()
+            youtube_views.install_tor()
         except KeyboardInterrupt:
             exit('Exiting ...')
         if all([not path.exists('/usr/sbin/tor'), youtube_views.alive]):
             exit('Please Install Tor')
 
-    try:youtube_views.run()
+    try:
+        youtube_views.run()
     except Exception as error:
         print('Error:', error)
         youtube_views.exit()
