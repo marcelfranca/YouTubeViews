@@ -37,7 +37,7 @@ class Views(Browser, Tor):
                 for url in [_ for _ in f.read().split('\n') if _]:
                     self.targets[url] = 0  # initial view
             except Exception as err:
-                exit(f'Error: {err}')
+                exit(f'Error: ? {err}')
 
     def display(self, url):
         n = '\033[0m'  # null ---> reset

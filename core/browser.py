@@ -31,8 +31,8 @@ class Browser(object):
             if not br.open(url, timeout=5.0).read():
                 return
 
-            sleepTime = random.randint(self.min, self.max)
-            [sleep(1) for _ in range(sleepTime) if self.alive]  # watching the video
+            sleep_time = random.randint(self.min, self.max)
+            [sleep(1) for _ in range(sleep_time) if self.alive]  # watching the video
 
             # search for something random
             br.select_form(nr=1)

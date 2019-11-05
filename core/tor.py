@@ -30,7 +30,7 @@ class Tor(object):
     def get_ip(self):
         try:
             ip = None
-            br = self.createBrowser()
+            br = self.create_browser()
             ip = br.open('https://api.ipify.org/?format=text', timeout=2).read()
             br.close()
         except Exception as e:
