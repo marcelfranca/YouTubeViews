@@ -11,4 +11,4 @@ RUN mkdir /app
 WORKDIR /app
 COPY ./ /app
 
-CMD python youtube.py 1000 youtubeLinks.txt 600 900
+CMD python youtube.py 1 youtubeLinks.txt 55 60
