@@ -11,4 +11,6 @@ RUN mkdir /app
 WORKDIR /app
 COPY ./ /app
 
+EXPOSE 9050
+
 CMD python youtube.py 1 youtubeLinks.txt 55 60
