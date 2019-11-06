@@ -34,7 +34,7 @@ class Tor(object):
             ip = br.open('https://api.ipify.org/?format=text', timeout=2).read()
             br.close()
         except Exception as e:
-            print(e)
+            print(f'Error: Aqui? {e}')
             pass
         finally:
             if not self.alive:
@@ -76,5 +76,5 @@ class Tor(object):
                 self.recentIPs.put(ip)
 
         except Exception as e:
-            print(e)
+            print(f'Error: {e}')
             pass

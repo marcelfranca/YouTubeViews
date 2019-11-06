@@ -17,12 +17,12 @@ class Views(Browser, Tor):
     def __init__(self, urllist, visits, min, max):
 
         super().__init__()
-        self.bots = 5  # max amount of bots to use
+        self.bots = 2  # max amount of bots to use
         self.count = 0  # returning bots
         self.ip = None
         self.alive = True
         self.targets = {}  # {url: visits}
-        self.recentIPs = Queue(10)
+        self.recentIPs = Queue(5)
 
         self.min = int(min)
         self.max = int(max)
@@ -49,9 +49,9 @@ class Views(Browser, Tor):
         call('clear')
         print('')
         print('  +------ Youtube Views ------+')
-        print('  [-] Url: {}{}{}'.format(g, url, n))
-        print('  [-] Proxy IP: {}{}{}'.format(b, self.ip, n))
-        print('  [-] Visits: {}{}{}'.format(y, self.targets[url], n))
+        print(f'  [-] Url: {g}{url}{n}')
+        print(f'  [-] Proxy IP: {b}{self.ip}{n}')
+        print(f'  [-] Visits: {y}{self.targets[url]}{n}')
 
     def visit(self, url):
         try:
@@ -59,7 +59,7 @@ class Views(Browser, Tor):
                 views = self.targets[url]
                 self.targets[url] = views + 1
         except Exception as e:
-            print(e)
+            print(f'Error: ? {e}')
             pass
         finally:
             self.count -= 1
@@ -67,7 +67,7 @@ class Views(Browser, Tor):
     def connection(self):
         try:
             br = self.create_browser()
-            br.open('https://example.com', timeout=2.5)
+            br.open('https://example.com', timeout=1)
             br.close()
         except Exception as e:
             print(f'Error: {e}: Unable to access the internet')
@@ -95,12 +95,13 @@ class Views(Browser, Tor):
                     del self.targets[url]
                     continue
 
-                if url in urls:continue  # prevent wrapping
+                if url in urls:
+                    continue  # prevent wrapping
                 ndex = ndex+1 if ndex < len(self.targets)-1 else 0
                 Thread(target=self.visit, args=[url]).start()
                 urls.append(url)
                 self.count += 1
-                sleep(1)
+                sleep(10)
 
             while all([self.count, self.alive]):
                 for url in urls:
@@ -108,7 +109,7 @@ class Views(Browser, Tor):
                         self.display(url)
                         [sleep(1) for _ in range(7) if all([self.count, self.alive])]
                     except Exception as e:
-                        print(e)
+                        print(f'Error: ?? {e}')
                         self.exit()
 
 
@@ -136,5 +137,5 @@ if __name__ == '__main__':
     try:
         youtube_views.run()
     except Exception as error:
-        print('Error:', error)
+        print(f'Error: {error}')
         youtube_views.exit()

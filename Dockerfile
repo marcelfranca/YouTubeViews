@@ -13,4 +13,4 @@ COPY ./ /app
 
 EXPOSE 9050
 
-CMD python youtube.py 1 youtubeLinks.txt 55 60
+CMD python youtube.py 10 youtubeLinks.txt 53 90

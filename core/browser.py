@@ -19,7 +19,7 @@ class Browser(object):
         br.set_handle_refresh(False)
         br.set_cookiejar(http.cookiejar.LWPCookieJar())
         br.addheaders = [('User-agent', self.useragent())]
-        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=1)
+        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=2.5)
         return br
 
     def watch(self, url):
