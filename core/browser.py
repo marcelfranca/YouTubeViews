@@ -19,7 +19,7 @@ class Browser(object):
         br.set_handle_refresh(False)
         br.set_cookiejar(http.cookiejar.LWPCookieJar())
         br.addheaders = [('User-agent', self.useragent())]
-        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=2.5)
+        br.set_handle_refresh(mechanize._http.HTTPRefreshProcessor(), max_time=10)
         return br
 
     def watch(self, url):
@@ -28,7 +28,7 @@ class Browser(object):
 
         try:
             br = self.create_browser()
-            if not br.open(url, timeout=5.0).read():
+            if not br.open(url, timeout=10.0).read():
                 return
 
             sleep_time = random.randint(self.min, self.max)
@@ -38,7 +38,7 @@ class Browser(object):
             br.select_form(nr=1)
             br.form['search_query'] = random.choice([_ for _ in ascii_letters])
 
-            sleep(0.5)
+            sleep(1)
             br.submit()
             br.close()
             return True
